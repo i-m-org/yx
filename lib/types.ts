@@ -231,4 +231,6 @@ export interface AppContextType extends AppState {
   getEstadisticasSucursal: (mes?: string) => EstadisticaSucursal[];
   getEstadisticasProducto: (mes?: string) => EstadisticaProducto[];
   getEstadisticasEmpleado: (mes?: string) => EstadisticaEmpleado[];
+  // Estado de conectividad
+  online: boolean;
 }

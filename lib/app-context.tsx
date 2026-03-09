@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
 import type {
   AppState,
   AppContextType,
@@ -23,9 +23,17 @@ import {
   ofertasIniciales,
 } from "./initial-data";
 import { infografiasConfigInicial } from "./infografias-config";
-
-const STORAGE_KEY = "ventas-app-data";
-const INFOGRAFIAS_KEY = "infografias-config";
+import {
+  loadAppState,
+  saveAppState,
+  loadInfografiasConfig,
+  saveInfografiasConfig,
+  onConnectivityChange,
+  requestSync,
+  isOnline,
+  queueOperation,
+  STORES,
+} from "./db";
 
 const estadoInicial: AppState = {
   sucursales: sucursalesIniciales,
@@ -43,45 +51,119 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AppState>(estadoInicial);
   const [infografiasConfig, setInfografiasConfig] = useState<InfografiasConfig>(infografiasConfigInicial);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [online, setOnline] = useState(isOnline());
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Cargar datos del localStorage al iniciar
+  // ── CARGA INICIAL desde IndexedDB ──────────────────────────────────────────
   useEffect(() => {
-    const savedData = localStorage.getItem(STORAGE_KEY);
-    if (savedData) {
+    async function cargarDatos() {
       try {
-        const parsed = JSON.parse(savedData);
-        setState(parsed);
-      } catch {
-        console.error("Error al cargar datos guardados");
+        // Intentar cargar desde IndexedDB
+        const estadoGuardado = await loadAppState();
+        if (estadoGuardado) {
+          setState((prev) => ({ ...prev, ...estadoGuardado }));
+        } else {
+          // Primera vez: guardar datos iniciales en IndexedDB
+          await saveAppState(estadoInicial);
+        }
+
+        const configGuardada = await loadInfografiasConfig();
+        if (configGuardada) {
+          setInfografiasConfig(configGuardada);
+        } else {
+          await saveInfografiasConfig(infografiasConfigInicial);
+        }
+      } catch (err) {
+        console.error("[App] Error cargando desde IndexedDB, usando datos iniciales:", err);
+        // Fallback a localStorage si IndexedDB falla
+        try {
+          const ls = localStorage.getItem("ventas-app-data");
+          if (ls) setState(JSON.parse(ls));
+          const li = localStorage.getItem("infografias-config");
+          if (li) setInfografiasConfig(JSON.parse(li));
+        } catch { /* ignorar */ }
+      } finally {
+        setIsLoaded(true);
       }
     }
-    const savedInfografias = localStorage.getItem(INFOGRAFIAS_KEY);
-    if (savedInfografias) {
-      try {
-        setInfografiasConfig(JSON.parse(savedInfografias));
-      } catch {
-        console.error("Error al cargar configuración de infografías");
-      }
-    }
-    setIsLoaded(true);
+    cargarDatos();
   }, []);
 
-  // Guardar datos en localStorage cuando cambien
+  // ── PERSISTENCIA: guardar en IndexedDB con debounce ──────────────────────
   useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
+    if (!isLoaded) return;
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(async () => {
+      try {
+        await saveAppState(state);
+        // También guardar en localStorage como respaldo
+        localStorage.setItem("ventas-app-data", JSON.stringify(state));
+      } catch (err) {
+        console.error("[App] Error guardando estado:", err);
+        localStorage.setItem("ventas-app-data", JSON.stringify(state));
+      }
+    }, 300);
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    };
   }, [state, isLoaded]);
 
   useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem(INFOGRAFIAS_KEY, JSON.stringify(infografiasConfig));
-    }
+    if (!isLoaded) return;
+    saveInfografiasConfig(infografiasConfig).catch(() => {
+      localStorage.setItem("infografias-config", JSON.stringify(infografiasConfig));
+    });
   }, [infografiasConfig, isLoaded]);
+
+  // ── CONECTIVIDAD: disparar sync al reconectar ─────────────────────────────
+  useEffect(() => {
+    const handleOnline = () => {
+      console.log("[App] Conexión restaurada — iniciando sincronización");
+      setOnline(true);
+      requestSync();
+    };
+    const handleOffline = () => {
+      console.log("[App] Sin conexión — modo offline activo");
+      setOnline(false);
+    };
+
+    const unregister = onConnectivityChange(handleOnline, handleOffline);
+
+    // Escuchar mensajes del Service Worker
+    const handleSWMessage = (event: MessageEvent) => {
+      const { type, procesadas } = event.data || {};
+      if (type === "SYNC_COMPLETE" && procesadas > 0) {
+        console.log(`[App] SW: ${procesadas} operaciones sincronizadas`);
+      }
+    };
+    navigator.serviceWorker?.addEventListener("message", handleSWMessage);
+
+    return () => {
+      unregister();
+      navigator.serviceWorker?.removeEventListener("message", handleSWMessage);
+    };
+  }, []);
+
+  // ── HELPER: encola operación si está offline ──────────────────────────────
+  const encolarSiOffline = useCallback(
+    (storeName: string, tipo: "CREATE" | "UPDATE" | "DELETE", recordId: string, datos: unknown) => {
+      if (!isOnline()) {
+        queueOperation({
+          storeName: storeName as typeof STORES[keyof typeof STORES],
+          operationType: tipo,
+          recordId,
+          datos,
+        }).catch(console.error);
+      }
+    },
+    []
+  );
 
   const actualizarInfografiasConfig = useCallback((config: InfografiasConfig) => {
     setInfografiasConfig(config);
   }, []);
+
+
 
   // Utilidad para generar IDs únicos
   const generarId = (prefijo: string) => `${prefijo}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -182,25 +264,30 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // VENTAS
   const agregarVenta = useCallback((venta: Omit<Venta, "id">) => {
+    const id = generarId("venta");
+    const nuevaVenta = { ...venta, id };
     setState((prev) => ({
       ...prev,
-      ventas: [...prev.ventas, { ...venta, id: generarId("venta") }],
+      ventas: [...prev.ventas, nuevaVenta],
     }));
-  }, []);
+    encolarSiOffline(STORES.ventas, "CREATE", id, nuevaVenta);
+  }, [encolarSiOffline]);
 
   const actualizarVenta = useCallback((id: string, datos: Partial<Venta>) => {
     setState((prev) => ({
       ...prev,
       ventas: prev.ventas.map((v) => (v.id === id ? { ...v, ...datos } : v)),
     }));
-  }, []);
+    encolarSiOffline(STORES.ventas, "UPDATE", id, datos);
+  }, [encolarSiOffline]);
 
   const eliminarVenta = useCallback((id: string) => {
     setState((prev) => ({
       ...prev,
       ventas: prev.ventas.filter((v) => v.id !== id),
     }));
-  }, []);
+    encolarSiOffline(STORES.ventas, "DELETE", id, { id });
+  }, [encolarSiOffline]);
 
   // OFERTAS COMERCIALES
   const agregarOferta = useCallback((oferta: Omit<OfertaComercial, "id">) => {
@@ -314,6 +401,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const value: AppContextType = {
     ...state,
+    online,
     infografiasConfig,
     actualizarInfografiasConfig,
     agregarSucursal,

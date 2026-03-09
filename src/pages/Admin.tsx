@@ -44,6 +44,7 @@ import {
   Package,
   Target,
   Megaphone,
+  Bell,
   Plus,
   Pencil,
   Trash2,
@@ -51,6 +52,7 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
+import { NotificacionesTab } from "./admin/NotificacionesTab";
 import { cn } from "@/lib/utils";
 import type { Sucursal, Empleado, Producto, Meta, OfertaComercial } from "@/lib/types";
 
@@ -164,7 +166,7 @@ export default function AdminPage() {
 
         <div className="p-4 sm:p-6 lg:p-8">
           <Tabs defaultValue="sucursales" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="sucursales" className="gap-2">
                 <Building2 className="h-4 w-4" />
                 <span className="hidden sm:inline">Sucursales</span>
@@ -185,6 +187,10 @@ export default function AdminPage() {
                 <Megaphone className="h-4 w-4" />
                 <span className="hidden sm:inline">Ofertas</span>
               </TabsTrigger>
+              <TabsTrigger value="notificaciones" className="gap-2">
+                <Bell className="h-4 w-4" />
+                <span className="hidden sm:inline">Notificaciones</span>
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="sucursales">
@@ -201,6 +207,9 @@ export default function AdminPage() {
             </TabsContent>
             <TabsContent value="ofertas">
               <OfertasTab />
+            </TabsContent>
+            <TabsContent value="notificaciones">
+              <NotificacionesTab />
             </TabsContent>
           </Tabs>
         </div>

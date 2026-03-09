@@ -1,0 +1,89 @@
+{
+  "name": "Sistema de Ventas - Control y Seguimiento",
+  "short_name": "VentasApp",
+  "description": "Sistema profesional de gestión de ventas, metas y avances por sucursal y empleado",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "orientation": "portrait-primary",
+  "lang": "es-MX",
+  "scope": "/",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon-72.svg",
+      "sizes": "72x72",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-96.svg",
+      "sizes": "96x96",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-128.svg",
+      "sizes": "128x128",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-144.svg",
+      "sizes": "144x144",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-152.svg",
+      "sizes": "152x152",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-384.svg",
+      "sizes": "384x384",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "Dashboard principal"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "/",
+      "description": "Ver dashboard principal"
+    },
+    {
+      "name": "Registro",
+      "url": "/registro",
+      "description": "Registrar nueva venta"
+    },
+    {
+      "name": "Avances",
+      "url": "/avances",
+      "description": "Ver avances del equipo"
+    }
+  ],
+  "prefer_related_applications": false
+}
