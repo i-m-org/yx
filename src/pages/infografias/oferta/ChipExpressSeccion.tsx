@@ -1,8 +1,14 @@
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Zap, SmartphoneNfc, Smartphone, Globe, ShieldCheck, CheckCircle2, ArrowRight } from "lucide-react"
+import { useApp } from "@/lib/app-context"
+
+const beneficioIcons = [<Globe />, <Zap />, <ShieldCheck />];
 
 export function ChipExpressSeccion() {
+  const { infografiasConfig } = useApp();
+  const { heroBadge, heroSubtitulo, beneficios, pasos, ctaTexto, footerTexto } = infografiasConfig.chipExpress;
+
   return (
     <div className="max-w-6xl mx-auto px-4 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
@@ -11,13 +17,13 @@ export function ChipExpressSeccion() {
         <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center">
           <div className="space-y-6">
             <Badge className="bg-white text-blue-600 font-black px-4 py-1 rounded-full uppercase tracking-tighter text-[10px]">
-              Activación Inmediata
+              {heroBadge}
             </Badge>
             <h1 className="text-6xl md:text-8xl font-black italic tracking-tighter leading-[0.8]">
               CHIP <br /> EXPRESS
             </h1>
             <p className="text-blue-50 text-xl font-medium max-w-sm">
-              Conéctate al instante con la Red más rápida de México. Sin contratos, sin esperas.
+              {heroSubtitulo}
             </p>
           </div>
           <div className="flex justify-center md:justify-end">
@@ -31,17 +37,13 @@ export function ChipExpressSeccion() {
 
       {/* BENEFICIOS CLAVE */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[
-          { icon: <Globe />, t: "Cobertura Total", d: "La mejor señal en todo el país." },
-          { icon: <Zap />, t: "Velocidad 5G", d: "Navega a la máxima potencia disponible." },
-          { icon: <ShieldCheck />, t: "Control Total", d: "Gestiona todo desde Mi Telcel." }
-        ].map((item, i) => (
+        {beneficios.map((item, i) => (
           <Card key={i} className="p-8 rounded-[2.5rem] border-none bg-white shadow-sm hover:shadow-md transition-all text-center space-y-4 group">
             <div className="mx-auto w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 group-hover:bg-[#002f6c] group-hover:text-white transition-colors">
-              {item.icon}
+              {beneficioIcons[i % beneficioIcons.length]}
             </div>
-            <h3 className="text-xl font-black italic tracking-tighter uppercase">{item.t}</h3>
-            <p className="text-slate-500 text-sm font-medium">{item.d}</p>
+            <h3 className="text-xl font-black italic tracking-tighter uppercase">{item.titulo}</h3>
+            <p className="text-slate-500 text-sm font-medium">{item.descripcion}</p>
           </Card>
         ))}
       </div>
@@ -52,21 +54,17 @@ export function ChipExpressSeccion() {
           Activa en 3 Pasos
         </h2>
         <div className="grid md:grid-cols-3 gap-12">
-          {[
-            { n: "01", t: "Inserta", d: "Coloca tu nuevo Chip Express en tu Smartphone desbloqueado." },
-            { n: "02", t: "Recarga", d: "Realiza una recarga desde $50 para activar tus beneficios." },
-            { n: "03", t: "Disfruta", d: "Realiza una llamada o navega para dar de alta tu línea." }
-          ].map((step, i) => (
+          {pasos.map((step, i) => (
             <div key={i} className="relative group">
               <span className="text-8xl font-black text-white absolute -top-10 -left-4 group-hover:text-blue-100 transition-colors">
-                {step.n}
+                {String(i + 1).padStart(2, "0")}
               </span>
               <div className="relative z-10 space-y-2">
                 <h4 className="text-2xl font-black text-slate-900 italic uppercase tracking-tighter">
-                  {step.t}
+                  {step.titulo}
                 </h4>
                 <p className="text-slate-500 font-medium leading-relaxed">
-                  {step.d}
+                  {step.descripcion}
                 </p>
               </div>
             </div>
@@ -78,7 +76,7 @@ export function ChipExpressSeccion() {
       <Card className="bg-[#002f6c] p-10 rounded-[3rem] text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl overflow-hidden relative">
         <div className="space-y-2 relative z-10">
             <h3 className="text-3xl font-black italic tracking-tighter uppercase leading-none">
-                ¿Ya tienes tu Chip?
+                {ctaTexto}
             </h3>
             <p className="text-blue-200 font-medium">Empieza a navegar con los mejores paquetes Sin Límite.</p>
         </div>
@@ -92,7 +90,7 @@ export function ChipExpressSeccion() {
       {/* LEGALES PEQUEÑOS */}
       <div className="text-center opacity-40">
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.4em]">
-           Amigo de Telcel - Chip Express 2026
+           {footerTexto}
         </p>
       </div>
 

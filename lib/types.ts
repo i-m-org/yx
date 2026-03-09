@@ -1,5 +1,86 @@
 // Tipos principales para la aplicación de ventas
 
+// ─── Infografías Config ──────────────────────────────────────────────────────
+
+export interface PlanInternetAmigo {
+  id: string;
+  gb: string;
+  vigencia: string;
+  precio: string;
+  redes: string;
+  prime: string;
+  music: string;
+}
+
+export interface PaqueteAmigoKit {
+  p: string;
+  base: string;
+  promo: string;
+  total: string;
+  hot: boolean;
+}
+
+export interface PaqueteTiempo {
+  id: string;
+  horas: string;
+  precio: string;
+  recomendado: boolean;
+}
+
+export interface ModeloHuawei {
+  nombre: string;
+  detalle: string;
+  tipo: string;
+}
+
+export interface BeneficioChip {
+  titulo: string;
+  descripcion: string;
+}
+
+export interface PasoChip {
+  titulo: string;
+  descripcion: string;
+}
+
+export interface InfografiasConfig {
+  internetAmigo: {
+    subtitulo: string;
+    planes: PlanInternetAmigo[];
+  };
+  amigoKit: {
+    heroBadge: string;
+    heroTitulo: string;
+    heroSubtitulo: string;
+    vigencia: string;
+    paquetes: PaqueteAmigoKit[];
+  };
+  chipExpress: {
+    heroBadge: string;
+    heroSubtitulo: string;
+    beneficios: BeneficioChip[];
+    pasos: PasoChip[];
+    ctaTexto: string;
+    footerTexto: string;
+  };
+  amigoVieneConTodo: {
+    descripcion: string;
+    fechaCierre: string;
+    paqueteRegalo: string;
+    modelos: ModeloHuawei[];
+  };
+  portabilidad: {
+    vigenciaDisplay: string;
+    fechaInicio: string;
+    fechaFin: string;
+    footerTexto: string;
+  };
+  internetPorTiempo: {
+    paquetes: PaqueteTiempo[];
+  };
+}
+
+
 export interface Sucursal {
   id: string;
   nombre: string;
@@ -107,6 +188,10 @@ export interface AppState {
 
 // Tipo para el contexto
 export interface AppContextType extends AppState {
+  // Infografías Config
+  infografiasConfig: InfografiasConfig;
+  actualizarInfografiasConfig: (config: InfografiasConfig) => void;
+
   // Sucursales
   agregarSucursal: (sucursal: Omit<Sucursal, "id">) => void;
   actualizarSucursal: (id: string, datos: Partial<Sucursal>) => void;

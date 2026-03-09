@@ -1,29 +1,23 @@
 import { useState } from 'react'
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { 
-  Wifi, 
-  Clock, 
-  MessageSquare, 
-  Share2, 
-  Music, 
-  Video, 
-  ShieldAlert, 
+import {
+  Wifi,
+  Clock,
+  MessageSquare,
+  Share2,
+  Music,
+  Video,
+  ShieldAlert,
   ChevronRight,
   Info
 } from "lucide-react"
-
-const planesInternet = [
-  { id: "150", gb: "3 GB", vigencia: "25 días", precio: "$150", redes: "Ilimitadas", prime: "Básico", music: "500MB" },
-  { id: "100", gb: "1.8 GB", vigencia: "15 días", precio: "$100", redes: "Ilimitadas", prime: "Básico", music: "No" },
-  { id: "200", gb: "4 GB", vigencia: "30 días", precio: "$200", redes: "Ilimitadas", prime: "Básico", music: "500MB" },
-  { id: "500", gb: "10 GB", vigencia: "30 días", precio: "$500", redes: "Ilimitadas", prime: "Básico", music: "500MB" },
-  { id: "20", gb: "140 MB", vigencia: "2 días", precio: "$20", redes: "200 MB", prime: "No", music: "No" },
-  { id: "80", gb: "1 GB", vigencia: "12 días", precio: "$80", redes: "1.5 GB", prime: "No", music: "No" }
-]
+import { useApp } from "@/lib/app-context"
 
 export function InternetAmigoSeccion() {
   const [showLegal, setShowLegal] = useState(false);
+  const { infografiasConfig } = useApp();
+  const { planes: planesInternet, subtitulo } = infografiasConfig.internetAmigo;
 
   return (
     <div className="max-w-7xl mx-auto px-4 space-y-12 animate-in fade-in duration-700">
@@ -34,7 +28,7 @@ export function InternetAmigoSeccion() {
           INTERNET AMIGO
         </h1>
         <p className="text-slate-500 font-medium max-w-2xl mx-auto">
-          Elige el paquete que mejor se adapte a tu ritmo. Con navegación Sin Frontera y beneficios de streaming incluidos.
+          {subtitulo}
         </p>
       </div>
 

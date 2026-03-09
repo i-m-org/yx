@@ -12,6 +12,7 @@ import type {
   EstadisticaSucursal,
   EstadisticaProducto,
   EstadisticaEmpleado,
+  InfografiasConfig,
 } from "./types";
 import {
   sucursalesIniciales,
@@ -21,8 +22,10 @@ import {
   ventasIniciales,
   ofertasIniciales,
 } from "./initial-data";
+import { infografiasConfigInicial } from "./infografias-config";
 
 const STORAGE_KEY = "ventas-app-data";
+const INFOGRAFIAS_KEY = "infografias-config";
 
 const estadoInicial: AppState = {
   sucursales: sucursalesIniciales,
@@ -38,6 +41,7 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AppState>(estadoInicial);
+  const [infografiasConfig, setInfografiasConfig] = useState<InfografiasConfig>(infografiasConfigInicial);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Cargar datos del localStorage al iniciar
@@ -51,6 +55,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         console.error("Error al cargar datos guardados");
       }
     }
+    const savedInfografias = localStorage.getItem(INFOGRAFIAS_KEY);
+    if (savedInfografias) {
+      try {
+        setInfografiasConfig(JSON.parse(savedInfografias));
+      } catch {
+        console.error("Error al cargar configuración de infografías");
+      }
+    }
     setIsLoaded(true);
   }, []);
 
@@ -60,6 +72,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
   }, [state, isLoaded]);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem(INFOGRAFIAS_KEY, JSON.stringify(infografiasConfig));
+    }
+  }, [infografiasConfig, isLoaded]);
+
+  const actualizarInfografiasConfig = useCallback((config: InfografiasConfig) => {
+    setInfografiasConfig(config);
+  }, []);
 
   // Utilidad para generar IDs únicos
   const generarId = (prefijo: string) => `${prefijo}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -292,6 +314,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const value: AppContextType = {
     ...state,
+    infografiasConfig,
+    actualizarInfografiasConfig,
     agregarSucursal,
     actualizarSucursal,
     eliminarSucursal,

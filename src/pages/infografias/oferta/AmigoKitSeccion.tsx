@@ -1,34 +1,27 @@
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Smartphone, Gift, Info, CheckCircle2, ChevronRight } from "lucide-react"
-
-const paquetesKit = [
-  { p: "50", base: "500 MB", promo: "500 MB", total: "1.0 GB", hot: false },
-  { p: "80", base: "800 MB", promo: "800 MB", total: "1.6 GB", hot: false },
-  { p: "100", base: "1.5 GB", promo: "1.5 GB", total: "3 GB", hot: true },
-  { p: "150", base: "2.5 GB", promo: "2.5 GB", total: "5 GB", hot: false },
-  { p: "200", base: "3.5 GB", promo: "3.5 GB", total: "7 GB", hot: false },
-  { p: "300", base: "5.5 GB", promo: "5.5 GB", total: "11 GB", hot: true },
-  { p: "500", base: "8 GB", promo: "8 GB", total: "16 GB", hot: false },
-]
+import { useApp } from "@/lib/app-context"
 
 export function AmigoKitSeccion() {
+  const { infografiasConfig } = useApp();
+  const { paquetes: paquetesKit, heroBadge, heroTitulo, heroSubtitulo, vigencia } = infografiasConfig.amigoKit;
+
   return (
     <div className="max-w-6xl mx-auto px-4 pb-20 space-y-10">
       
       {/* HERO BANNER AMIGO KIT */}
       <div className="relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-slate-900 via-[#002f6c] to-blue-900 p-10 md:p-16 text-white shadow-2xl">
         <div className="relative z-10 space-y-6 max-w-2xl">
-          <Badge className="bg-amber-400 text-slate-900 border-none font-black px-4 py-1">PROMO AMIGO KIT</Badge>
+          <Badge className="bg-amber-400 text-slate-900 border-none font-black px-4 py-1">{heroBadge}</Badge>
           <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter leading-[0.9]">
-            ESTRENA Y <br />
-            <span className="text-amber-400 tracking-normal text-4xl md:text-6xl uppercase">Recibe el Doble</span>
+            {heroTitulo}
           </h1>
           <p className="text-blue-100 text-lg font-medium">
-            Durante 6 meses, disfruta el doble de datos al comprar tu Amigo Kit con esquema Amigo Sin Límite.
+            {heroSubtitulo}
           </p>
           <div className="flex items-center gap-2 text-xs font-bold text-blue-200 uppercase tracking-widest">
-             Vigencia: 05 Sep 2025 - 02 Mar 2026
+             Vigencia: {vigencia}
           </div>
         </div>
         <Smartphone className="absolute -right-10 -bottom-10 w-80 h-80 text-white/10 rotate-12" />

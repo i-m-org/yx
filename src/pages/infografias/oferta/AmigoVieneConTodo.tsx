@@ -1,25 +1,22 @@
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 // IMPORTANTE: Se incluyeron todos los iconos necesarios para evitar el error de renderizado
-import { 
-  Calendar, 
-  Facebook, 
-  Tablet, 
-  Watch, 
-  ChevronRight, 
-  ShieldCheck, 
-  Zap, 
-  CheckCircle2 
+import {
+  Calendar,
+  Facebook,
+  Tablet,
+  Watch,
+  ChevronRight,
+  ShieldCheck,
+  Zap,
+  CheckCircle2
 } from "lucide-react"
-
-const modelosHuawei = [
-  { nombre: "Nova 13", detalle: "256GB | 4.5G", tipo: "Smartphone" },
-  { nombre: "Nova 13 + Watch Fit 3", detalle: "HB | 4.5G", tipo: "Bundle" },
-  { nombre: "Watch 5 42MM", detalle: "SOC-L19L / L29L / L29M", tipo: "Watch" },
-  { nombre: "Watch 5 46MM", detalle: "RTS-L19F / L29M / L39L", tipo: "Watch" }
-]
+import { useApp } from "@/lib/app-context"
 
 export function AmigoVieneConTodo() {
+  const { infografiasConfig } = useApp();
+  const { modelos: modelosHuawei, descripcion, fechaCierre, paqueteRegalo } = infografiasConfig.amigoVieneConTodo;
+
   return (
     <div className="max-w-6xl mx-auto px-4 space-y-12 animate-in fade-in duration-500">
       
