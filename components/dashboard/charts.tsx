@@ -1,5 +1,3 @@
-"use client";
-
 import { useApp } from "@/lib/app-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -38,7 +36,7 @@ export function SucursalesChart() {
   }));
 
   return (
-    <Card className="col-span-1 lg:col-span-2">
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">Ventas por Sucursal</CardTitle>
         <CardDescription>Comparativa ventas vs metas del mes actual</CardDescription>
@@ -87,7 +85,7 @@ export function ProductosChart() {
   }));
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">Ventas por Producto</CardTitle>
         <CardDescription>Distribucion de ventas mensuales</CardDescription>
@@ -137,7 +135,7 @@ export function AvanceChart() {
   }));
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">Avance por Sucursal</CardTitle>
         <CardDescription>Porcentaje de cumplimiento de metas</CardDescription>

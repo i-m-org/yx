@@ -1,5 +1,3 @@
-"use client";
-
 import { useApp } from "@/lib/app-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -41,7 +39,7 @@ export function ProgressTable() {
   };
 
   return (
-    <Card className="col-span-1 lg:col-span-2">
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">Avance Detallado por Sucursal</CardTitle>
         <CardDescription>Progreso hacia las metas del mes actual</CardDescription>
@@ -99,7 +97,7 @@ export function TopEmpleados() {
     .slice(0, 5);
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">Top Vendedores</CardTitle>
         <CardDescription>Mejores resultados del mes</CardDescription>

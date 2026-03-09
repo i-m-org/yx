@@ -1,5 +1,3 @@
-"use client";
-
 import { useApp } from "@/lib/app-context";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -95,7 +93,7 @@ export function KPICards() {
   };
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
       <KPICard
         title="Ventas del Mes"
         value={totalVentas}
